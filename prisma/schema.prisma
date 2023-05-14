@@ -1,0 +1,93 @@
+datasource db {
+    provider = "mysql"
+    url      = env("DATABASE_URL")
+}
+
+generator client {
+    provider = "prisma-client-js"
+}
+
+model Adminaccount {
+    id        Int    @id @default(autoincrement())
+    name      String
+    user_name String
+    password  String
+}
+
+model Topic {
+    id         Int        @id @default(autoincrement())
+    topic_name String
+    subtopics  Subtopic[]
+}
+
+model Teacher {
+    id        Int    @id @default(autoincrement())
+    name      String
+    user_name String
+    password  String
+}
+
+model Subtopic {
+    id            Int        @id @default(autoincrement())
+    subtopic_name String
+    questions     Question[]
+    topic         Topic?     @relation(fields: [topic_id], references: [id])
+    topic_id      Int?
+}
+
+model Question {
+    id          Int          @id @default(autoincrement())
+    question    String
+    activities  Activities[]
+    subtopic    Subtopic?    @relation(fields: [subtopic_id], references: [id])
+    subtopic_id Int?
+}
+
+model Activities {
+    id                  Int                  @id @default(autoincrement())
+    sentence_completion SentenceCompletion[]
+    unscramble          Unscramble[]
+    question            Question?            @relation(fields: [question_id], references: [id])
+    question_id         Int?
+    dialogue_completion DialogeCompletion[]
+    Roleplay            Roleplay[]
+}
+
+// sentence completion activity
+
+model SentenceCompletion {
+    id             Int         @id @default(autoincrement())
+    activity_name  String
+    instructions   Json
+    fillintheblank Json
+    word_bank      Json
+    vocabulary     Json
+    note           Json
+    activities     Activities? @relation(fields: [activities_id], references: [id])
+    activities_id  Int?
+}
+
+model Unscramble {
+    id              Int         @id @default(autoincrement())
+    instructions    Json
+    scrambled_words Json
+    activities      Activities? @relation(fields: [activities_id], references: [id])
+    activities_id   Int?
+}
+
+model DialogeCompletion {
+    id            Int         @id @default(autoincrement())
+    instructions  Json
+    dialogue      Json
+    activities    Activities? @relation(fields: [activities_id], references: [id])
+    activities_id Int?
+}
+
+model Roleplay {
+    id            Int         @id @default(autoincrement())
+    instructions Json
+    scenario String
+    content String
+    activities    Activities? @relation(fields: [activities_id], references: [id])
+    activities_id Int?
+}
